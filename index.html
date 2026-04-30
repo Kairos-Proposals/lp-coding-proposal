@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>記事LPコーディング提案書 | Kairos</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #0A0A0A;
+  --black-mid: #111111;
+  --black-light: #181818;
+  --white: #FAFAFA;
+  --green: #22C070;
+  --green-light: rgba(34,192,112,0.1);
+  --green-border: rgba(34,192,112,0.25);
+  --gray: #888888;
+  --stone: #2A2A2A;
+  --text-dim: rgba(255,255,255,0.5);
+  --text-muted: rgba(255,255,255,0.2);
+  --border: rgba(255,255,255,0.07);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Noto Sans JP',sans-serif; background:var(--black); color:var(--white); overflow-x:hidden; }
+
+/* HERO */
+.hero {
+  min-height:100vh; display:flex; flex-direction:column; justify-content:center;
+  padding:80px 28px 64px; position:relative; overflow:hidden;
+}
+.hero-top { position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg, transparent, var(--green), transparent); }
+.hero-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  border:1px solid var(--green-border); background:var(--green-light);
+  padding:5px 16px; font-family:'DM Mono',monospace;
+  font-size:10px; color:var(--green); letter-spacing:0.14em;
+  text-transform:uppercase; margin-bottom:36px; width:fit-content;
+}
+.hero-speed {
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--green); color:var(--black);
+  padding:6px 16px; font-family:'DM Mono',monospace;
+  font-size:11px; font-weight:700; letter-spacing:0.08em;
+  margin-bottom:24px; width:fit-content;
+}
+.hero h1 {
+  font-family:'Noto Serif JP',serif; font-size:clamp(28px,6.5vw,52px);
+  font-weight:700; line-height:1.35; margin-bottom:20px; color:var(--white);
+}
+.hero h1 em { font-style:normal; color:var(--green); }
+.hero-divider { width:40px; height:1px; background:linear-gradient(90deg, var(--green), transparent); margin:22px 0; }
+.hero-sub { font-size:13px; color:var(--text-dim); line-height:1.9; max-width:520px; margin-bottom:48px; font-weight:300; }
+.hero-stats {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+  background:rgba(255,255,255,0.06); max-width:420px;
+}
+.stat { background:rgba(255,255,255,0.03); padding:16px 12px; text-align:center; }
+.stat-val { display:block; font-family:'DM Mono',monospace; font-size:18px; color:var(--green); line-height:1; margin-bottom:5px; }
+.stat-label { font-size:10px; color:var(--text-muted); line-height:1.5; }
+
+/* SECTION */
+.section { padding:72px 28px; }
+.sec-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--green); letter-spacing:0.18em; text-transform:uppercase; margin-bottom:10px; }
+.sec-title { font-family:'Noto Serif JP',serif; font-size:clamp(22px,5vw,34px); font-weight:700; line-height:1.35; margin-bottom:16px; color:var(--white); }
+.sec-body { font-size:14px; line-height:1.9; color:var(--text-dim); font-weight:300; }
+
+/* STRENGTH */
+.strength { background:var(--black-mid); }
+.strength-cards { display:flex; flex-direction:column; gap:12px; margin-top:28px; }
+.strength-card {
+  display:grid; grid-template-columns:44px 1fr; gap:14px;
+  padding:18px 20px; background:rgba(255,255,255,0.03);
+  border:1px solid var(--border); border-left:2px solid var(--green); align-items:start;
+}
+.s-icon { font-size:22px; text-align:center; margin-top:2px; }
+.strength-card h3 { font-size:14px; font-weight:700; color:var(--white); margin-bottom:4px; }
+.strength-card p { font-size:13px; color:var(--text-dim); line-height:1.7; }
+.s-badge {
+  display:inline-block; font-family:'DM Mono',monospace; font-size:10px;
+  color:var(--green); background:var(--green-light); border:1px solid var(--green-border);
+  padding:2px 8px; margin-top:6px;
+}
+
+/* MOCKUP */
+.mockup { background:var(--black); }
+.mockup-note {
+  margin-top:16px; margin-bottom:28px; padding:14px 18px;
+  background:var(--green-light); border:1px solid var(--green-border);
+  font-size:13px; color:var(--green); line-height:1.7;
+}
+.mockup-frame {
+  border:1px solid rgba(255,255,255,0.1); overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,0.6);
+}
+.mockup-bar {
+  background:#0A0A0A; padding:10px 16px;
+  display:flex; align-items:center; gap:8px;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+.dot { width:10px; height:10px; border-radius:50%; }
+.mockup-url {
+  flex:1; background:rgba(255,255,255,0.05);
+  padding:4px 12px; font-family:'DM Mono',monospace;
+  font-size:11px; color:rgba(255,255,255,0.25);
+}
+
+/* ページモック — 記事LP */
+.m-lp { background:#FAFAFA; }
+
+.m-lp-nav {
+  background:#FFFFFF; padding:14px 24px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:2px solid #22C070;
+}
+.m-lp-logo { font-family:'Noto Serif JP',serif; font-size:15px; font-weight:700; color:#111; }
+.m-lp-cta-nav { background:#22C070; color:#fff; padding:7px 18px; font-size:11px; font-weight:700; border-radius:2px; }
+
+.m-lp-fv {
+  background:linear-gradient(135deg, #0A1A0E 0%, #0D2414 100%);
+  padding:56px 28px 48px; text-align:center; position:relative; overflow:hidden;
+}
+.m-lp-fv::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at 50% 60%, rgba(34,192,112,0.12) 0%, transparent 70%);
+}
+.m-lp-tag {
+  display:inline-block; font-family:'DM Mono',monospace; font-size:10px;
+  color:var(--green); border:1px solid var(--green-border); background:var(--green-light);
+  padding:3px 14px; margin-bottom:18px; letter-spacing:0.1em;
+}
+.m-lp-h1 {
+  font-family:'Noto Serif JP',serif; font-size:clamp(20px,4vw,32px);
+  font-weight:700; color:#FAFAFA; line-height:1.45; margin-bottom:14px;
+}
+.m-lp-h1 em { font-style:normal; color:#22C070; }
+.m-lp-sub { font-size:13px; color:rgba(255,255,255,0.6); line-height:1.9; margin-bottom:28px; max-width:540px; margin-left:auto; margin-right:auto; }
+.m-lp-btn {
+  display:inline-block; background:#22C070; color:#0A1A0E;
+  padding:16px 40px; font-size:15px; font-weight:700; letter-spacing:0.04em;
+  border-radius:3px;
+}
+.m-lp-btn-sub { display:block; font-size:11px; color:rgba(255,255,255,0.5); margin-top:10px; }
+
+.m-lp-points {
+  background:#FFFFFF; padding:32px 24px;
+  display:grid; grid-template-columns:repeat(3,1fr); gap:16px; border-bottom:1px solid #EEE;
+}
+.m-lp-point { text-align:center; padding:16px 8px; }
+.m-lp-point-icon { font-size:28px; margin-bottom:10px; }
+.m-lp-point-title { font-size:13px; font-weight:700; color:#111; margin-bottom:4px; }
+.m-lp-point-desc { font-size:11px; color:#888; line-height:1.6; }
+
+.m-lp-section { padding:32px 24px; background:#F8F8F8; border-bottom:1px solid #EEE; }
+.m-lp-sec-label { font-family:'DM Mono',monospace; font-size:9px; color:#22C070; letter-spacing:0.14em; text-transform:uppercase; margin-bottom:6px; }
+.m-lp-sec-h { font-family:'Noto Serif JP',serif; font-size:clamp(16px,3vw,22px); font-weight:700; color:#111; margin-bottom:10px; text-align:center; }
+.m-lp-sec-sub { font-size:12px; color:#888; margin-bottom:18px; line-height:1.7; text-align:center; }
+
+.m-lp-steps { display:flex; flex-direction:column; gap:10px; }
+.m-lp-step {
+  display:flex; gap:14px; align-items:flex-start;
+  padding:14px 18px; background:#FFFFFF; border:1px solid #EEE; border-left:3px solid #22C070;
+}
+.m-lp-step-num {
+  width:28px; height:28px; background:#22C070; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'DM Mono',monospace; font-size:12px; font-weight:700; color:#fff; flex-shrink:0;
+}
+.m-lp-step-title { font-size:13px; font-weight:700; color:#111; margin-bottom:3px; }
+.m-lp-step-desc { font-size:11px; color:#888; line-height:1.6; }
+
+.m-lp-testimonials { background:#FFFFFF; padding:28px 24px; border-bottom:1px solid #EEE; }
+.m-lp-t-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+.m-lp-t {
+  padding:14px; background:#F8F9FA; border:1px solid #EEE; border-radius:4px;
+}
+.m-lp-t-stars { color:#F0B040; font-size:12px; margin-bottom:6px; }
+.m-lp-t-text { font-size:11px; color:#444; line-height:1.7; margin-bottom:8px; }
+.m-lp-t-name { font-size:10px; color:#888; }
+
+.m-lp-cta-section {
+  background:linear-gradient(135deg, #0A1A0E, #0D2414);
+  padding:36px 24px; text-align:center;
+}
+.m-lp-cta-title { font-family:'Noto Serif JP',serif; font-size:20px; font-weight:700; color:#FAFAFA; margin-bottom:8px; }
+.m-lp-cta-sub { font-size:12px; color:rgba(255,255,255,0.6); margin-bottom:20px; line-height:1.7; }
+.m-lp-cta-btn { display:inline-block; background:#22C070; color:#0A1A0E; padding:14px 36px; font-size:14px; font-weight:700; border-radius:3px; }
+
+/* FLOW */
+.flow { background:var(--black-mid); }
+.flow-steps { display:flex; flex-direction:column; gap:0; margin-top:28px; border:1px solid var(--border); }
+.flow-step {
+  display:grid; grid-template-columns:56px 1fr; gap:0;
+  border-bottom:1px solid var(--border);
+}
+.flow-step:last-child { border-bottom:none; }
+.flow-num {
+  background:rgba(34,192,112,0.08); border-right:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'DM Mono',monospace; font-size:20px; color:rgba(34,192,112,0.4);
+  font-weight:700;
+}
+.flow-content { padding:16px 20px; }
+.flow-content h3 { font-size:13px; font-weight:700; color:var(--white); margin-bottom:4px; }
+.flow-content p { font-size:12px; color:var(--text-dim); line-height:1.7; }
+.flow-duration {
+  display:inline-block; font-family:'DM Mono',monospace; font-size:10px;
+  color:var(--green); background:var(--green-light); border:1px solid var(--green-border);
+  padding:2px 8px; margin-top:5px;
+}
+
+/* ESTIMATE */
+.estimate { background:var(--black); }
+.estimate-box { margin-top:24px; border:1px solid var(--border); overflow:hidden; }
+.estimate-header {
+  padding:20px 24px; border-bottom:1px solid var(--border);
+  display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:8px; background:var(--black-light); position:relative;
+}
+.estimate-header::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg, var(--green), transparent); }
+.estimate-header h3 { font-size:15px; font-weight:700; color:var(--white); }
+.estimate-price { font-family:'Noto Serif JP',serif; font-size:26px; font-weight:700; color:var(--green); line-height:1; }
+.estimate-price small { font-family:'Noto Sans JP',sans-serif; font-size:11px; color:var(--gray); margin-left:6px; }
+.estimate-rows { padding:14px 24px; background:var(--black-mid); }
+.estimate-row { display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--border); font-size:13px; }
+.estimate-row:last-child { border-bottom:none; }
+.estimate-row-label { color:var(--text-dim); }
+.estimate-row-val { font-family:'DM Mono',monospace; font-size:12px; color:var(--white); }
+.estimate-note { margin:0 24px 18px; padding:12px 14px; background:var(--green-light); border:1px solid var(--green-border); font-size:12px; color:rgba(80,200,140,0.9); line-height:1.7; }
+
+/* PORTFOLIO */
+.portfolio { background:var(--black-mid); padding:72px 28px; }
+.portfolio-links { display:flex; flex-direction:column; gap:1px; margin-top:24px; background:rgba(255,255,255,0.06); }
+.portfolio-link { display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.03); padding:16px 20px; text-decoration:none; transition:background 0.2s; }
+.portfolio-link:hover { background:rgba(255,255,255,0.06); }
+.portfolio-link h4 { font-size:13px; font-weight:700; color:var(--white); margin-bottom:3px; }
+.portfolio-link p { font-family:'DM Mono',monospace; font-size:11px; color:rgba(255,255,255,0.25); }
+.p-arrow { color:var(--green); font-size:16px; }
+
+/* CTA */
+.cta { background:var(--black); padding:72px 28px; text-align:center; }
+.cta-box { background:var(--black-light); border:1px solid var(--border); padding:40px 24px; margin-top:28px; position:relative; overflow:hidden; }
+.cta-box::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg, var(--green), transparent); }
+.cta-name { font-family:'Noto Serif JP',serif; font-size:22px; font-weight:700; color:var(--white); margin-bottom:4px; }
+.cta-role { font-family:'DM Mono',monospace; font-size:11px; color:var(--gray); margin-bottom:20px; }
+.cta-divider { height:1px; background:var(--border); margin:18px 0; }
+.cta-message { font-size:13px; color:var(--text-dim); line-height:1.9; }
+
+footer { background:#060606; border-top:1px solid var(--border); padding:18px 28px; text-align:center; }
+footer p { font-family:'DM Mono',monospace; font-size:11px; color:rgba(255,255,255,0.12); }
+
+@media (min-width:768px) {
+  .hero { padding:100px 64px; }
+  .section,.mockup,.portfolio,.cta { padding:96px 64px; }
+  .strength-cards { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .portfolio-links { display:grid; grid-template-columns:1fr 1fr; gap:1px; }
+  .cta-box { max-width:520px; margin:28px auto 0; padding:48px; }
+}
+@media (max-width:600px) {
+  .m-lp-points { grid-template-columns:1fr; }
+  .m-lp-t-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-top"></div>
+  <div class="hero-badge">SEOPRO_2 様　制作提案書</div>
+  <div class="hero-speed">⚡ 見本サイトをいただければ即日〜2日で納品できます</div>
+  <h1>見本通りに、<em>速く・正確に</em>。<br>それだけです。</h1>
+  <div class="hero-divider"></div>
+  <p class="hero-sub">記事LPのシンプルなHTML/CSSコーディング——複雑なアニメーションも高度な実装も不要。見本サイトを忠実に再現し、レスポンシブ対応まで含めてスピーディに納品します。</p>
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-val">即日〜</span><span class="stat-label">最短納品<br>2日以内</span></div>
+    <div class="stat"><span class="stat-val">忠実</span><span class="stat-label">見本サイトを<br>そのまま再現</span></div>
+    <div class="stat"><span class="stat-val">継続</span><span class="stat-label">複数案件<br>対応可能</span></div>
+  </div>
+</section>
+
+<!-- STRENGTH -->
+<section class="section strength">
+  <div class="sec-label">Why Kairos</div>
+  <h2 class="sec-title">3つの強み</h2>
+  <p class="sec-body">シンプルなコーディング案件だからこそ、スピード・精度・コミュニケーションの3点で差が出ます。</p>
+  <div class="strength-cards">
+    <div class="strength-card">
+      <div class="s-icon">⚡</div>
+      <div>
+        <h3>見本さえあれば即日着手・最短2日納品</h3>
+        <p>見本サイトと文章をご共有いただければ、その日のうちにコーディングを開始できます。シンプルなHTML/CSSであれば即日〜2日以内での納品実績があります。</p>
+        <span class="s-badge">SPEED</span>
+      </div>
+    </div>
+    <div class="strength-card">
+      <div class="s-icon">🎯</div>
+      <div>
+        <h3>見本サイトの再現精度にこだわります</h3>
+        <p>「参考サイトを元に再現」という依頼内容に対して、カラー・フォント・余白・レイアウトを細部まで忠実に再現します。レスポンシブ対応も込みで対応します。</p>
+        <span class="s-badge">ACCURACY</span>
+      </div>
+    </div>
+    <div class="strength-card">
+      <div class="s-icon">🔄</div>
+      <div>
+        <h3>継続案件・複数依頼に対応できる体制</h3>
+        <p>「作業内容が問題なければ継続して依頼」とのことで、複数案件の並行対応・安定したスケジュール管理が可能です。長期的なパートナーとして動ける体制があります。</p>
+        <span class="s-badge">CONTINUOUS</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MOCKUP -->
+<section class="section mockup">
+  <div class="sec-label">Deliverable Image</div>
+  <h2 class="sec-title">納品イメージ</h2>
+  <p class="sec-body">以下は記事LPのコーディング完成イメージです。見本サイトのデザインを忠実に再現し、レスポンシブ対応まで含めて納品します。</p>
+  <div class="mockup-note">💡 実際の納品物は見本サイトをベースにコーディングします。文章・デザインはSEOPRO_2様にご用意いただいたものを使用します。</div>
+
+  <div class="mockup-frame">
+    <div class="mockup-bar">
+      <div class="dot" style="background:#FF5F56"></div>
+      <div class="dot" style="background:#FFBD2E"></div>
+      <div class="dot" style="background:#27C93F"></div>
+      <div class="mockup-url">納品HTML / 記事LP（コーディングイメージ）</div>
+    </div>
+
+    <div class="m-lp">
+      <!-- ナビ -->
+      <div class="m-lp-nav">
+        <div class="m-lp-logo">記事タイトル / ブランド名</div>
+        <div class="m-lp-cta-nav">今すぐ申し込む</div>
+      </div>
+
+      <!-- FV -->
+      <div class="m-lp-fv">
+        <div class="m-lp-tag">SECTION 01 — FIRST VIEW</div>
+        <div class="m-lp-h1">
+          〇〇で悩んでいる方へ。<br>
+          <em>たった△△するだけで</em>、<br>
+          □□が手に入ります。
+        </div>
+        <p class="m-lp-sub">文章はSEOPRO_2様にご用意いただいたものをそのまま使用します。見本サイトのデザインを忠実に再現しながら、読みやすく・申し込みやすいレイアウトで実装します。</p>
+        <div class="m-lp-btn">▶ 今すぐ無料で申し込む</div>
+        <div class="m-lp-btn-sub">※ 申し込みは1分で完了します</div>
+      </div>
+
+      <!-- 3つのポイント -->
+      <div class="m-lp-points">
+        <div class="m-lp-point">
+          <div class="m-lp-point-icon">✅</div>
+          <div class="m-lp-point-title">ポイント01</div>
+          <div class="m-lp-point-desc">見本通りのデザインで忠実に再現します</div>
+        </div>
+        <div class="m-lp-point">
+          <div class="m-lp-point-icon">📱</div>
+          <div class="m-lp-point-title">ポイント02</div>
+          <div class="m-lp-point-desc">スマホ・PCどちらでも最適表示</div>
+        </div>
+        <div class="m-lp-point">
+          <div class="m-lp-point-icon">⚡</div>
+          <div class="m-lp-point-title">ポイント03</div>
+          <div class="m-lp-point-desc">即日〜2日以内でスピード納品</div>
+        </div>
+      </div>
+
+      <!-- ステップ -->
+      <div class="m-lp-section">
+        <div class="m-lp-sec-label">SECTION 02 — STEPS</div>
+        <div class="m-lp-sec-h">3ステップで〇〇が手に入る</div>
+        <p class="m-lp-sec-sub">文章・構成はSEOPRO_2様のご用意いただいたものを使用。以下はレイアウト例です。</p>
+        <div class="m-lp-steps">
+          <div class="m-lp-step"><div class="m-lp-step-num">1</div><div><div class="m-lp-step-title">STEP 01 — 申し込み</div><div class="m-lp-step-desc">フォームに必要事項を入力するだけ。1分で完了します。</div></div></div>
+          <div class="m-lp-step"><div class="m-lp-step-num">2</div><div><div class="m-lp-step-title">STEP 02 — 確認</div><div class="m-lp-step-desc">内容を確認後、すぐにご案内をお送りします。</div></div></div>
+          <div class="m-lp-step"><div class="m-lp-step-num">3</div><div><div class="m-lp-step-title">STEP 03 — 完了</div><div class="m-lp-step-desc">〇〇を受け取って、すぐにスタートできます。</div></div></div>
+        </div>
+      </div>
+
+      <!-- 口コミ -->
+      <div class="m-lp-testimonials">
+        <div class="m-lp-sec-label" style="font-family:'DM Mono',monospace;font-size:9px;color:#22C070;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px;">SECTION 03 — VOICE</div>
+        <div class="m-lp-sec-h" style="text-align:left;font-family:'Noto Serif JP',serif;font-size:18px;font-weight:700;color:#111;margin-bottom:14px;">お客様の声</div>
+        <div class="m-lp-t-grid">
+          <div class="m-lp-t"><div class="m-lp-t-stars">★★★★★</div><div class="m-lp-t-text">〇〇のおかげで△△が解決しました。とても満足しています！</div><div class="m-lp-t-name">30代女性 / 会社員</div></div>
+          <div class="m-lp-t"><div class="m-lp-t-stars">★★★★★</div><div class="m-lp-t-text">思っていたより簡単に始められました。継続して使っています。</div><div class="m-lp-t-name">40代男性 / 自営業</div></div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="m-lp-cta-section">
+        <div class="m-lp-cta-title">今すぐ申し込む</div>
+        <div class="m-lp-cta-sub">見本サイト通りのCTAデザインで実装します。ボタン文言・カラーも忠実に再現。</div>
+        <div class="m-lp-cta-btn">▶ 無料で今すぐ申し込む</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FLOW -->
+<section class="section flow">
+  <div class="sec-label">Delivery Flow</div>
+  <h2 class="sec-title">納品までの流れ</h2>
+  <p class="sec-body">見本サイトをご共有いただければ、最短即日でコーディングを開始します。</p>
+  <div class="flow-steps">
+    <div class="flow-step">
+      <div class="flow-num">01</div>
+      <div class="flow-content">
+        <h3>見本サイト・文章のご共有</h3>
+        <p>見本サイトURL・文章データをご共有いただき次第、即日着手します。不明点があれば当日中にお伺いします。</p>
+        <span class="flow-duration">ご共有後 → 即日着手</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">02</div>
+      <div class="flow-content">
+        <h3>HTML/CSSコーディング</h3>
+        <p>見本サイトを忠実に再現しながらコーディング。レスポンシブ対応・WordPress反映（ご希望の場合）まで対応します。</p>
+        <span class="flow-duration">1〜2日</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">03</div>
+      <div class="flow-content">
+        <h3>確認・修正・納品</h3>
+        <p>各デバイスでの表示確認後に納品。修正にも柔軟に対応しますのでご安心ください。</p>
+        <span class="flow-duration">当日〜翌日</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ESTIMATE -->
+<section class="section estimate">
+  <div class="sec-label">Estimate</div>
+  <h2 class="sec-title">お見積もり</h2>
+  <p class="sec-body">ご提示の報酬5,000円（税込）にて対応いたします。</p>
+  <div class="estimate-box">
+    <div class="estimate-header">
+      <h3>記事LP コーディング（1ページ）</h3>
+      <div class="estimate-price">5,500円<small>税込</small></div>
+    </div>
+    <div class="estimate-rows">
+      <div class="estimate-row"><span class="estimate-row-label">HTML/CSSコーディング（1ページ）</span><span class="estimate-row-val">込み</span></div>
+      <div class="estimate-row"><span class="estimate-row-label">レスポンシブ対応（スマホ・PC）</span><span class="estimate-row-val">込み</span></div>
+      <div class="estimate-row"><span class="estimate-row-label">見本サイトを元にしたデザイン再現</span><span class="estimate-row-val">込み</span></div>
+      <div class="estimate-row"><span class="estimate-row-label">軽微な修正対応</span><span class="estimate-row-val">込み</span></div>
+      <div class="estimate-row"><span class="estimate-row-label">納期</span><span class="estimate-row-val">即日〜2日以内</span></div>
+    </div>
+    <div class="estimate-note">※見本サイト・文章をご共有いただき次第、即日着手します。WordPress反映が必要な場合は別途ご相談ください。継続案件も喜んで対応いたします。</div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section class="portfolio">
+  <div class="sec-label">Portfolio</div>
+  <h2 class="sec-title">実績・ポートフォリオ</h2>
+  <div class="portfolio-links">
+    <a href="https://writeful.academy/" target="_blank" rel="noopener" class="portfolio-link"><div><h4>Webサイト・HP実装実績</h4><p>writeful.academy</p></div><span class="p-arrow">→</span></a>
+    <a href="https://kairos-epsilon.github.io/kairos-portfolio/" target="_blank" rel="noopener" class="portfolio-link"><div><h4>LP・コーポレートサイト実績</h4><p>kairos-portfolio</p></div><span class="p-arrow">→</span></a>
+    <a href="https://shibue-shoten.github.io/shibue320/index.html" target="_blank" rel="noopener" class="portfolio-link"><div><h4>コーポレートサイト実績</h4><p>shibue-shoten</p></div><span class="p-arrow">→</span></a>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="sec-label" style="text-align:center">Next Step</div>
+  <h2 class="sec-title" style="text-align:center">見本サイトを<br>共有してください。</h2>
+  <p class="sec-body" style="text-align:center;max-width:480px;margin:0 auto">見本サイトと文章をご共有いただければ、その日のうちに着手できます。まずはお任せください。</p>
+  <div class="cta-box">
+    <div class="cta-name">渋谷 俊久</div>
+    <div class="cta-role">Web Director / Team Kairos</div>
+    <div class="cta-divider"></div>
+    <p class="cta-message">シンプルなHTML/CSSコーディングはスピードと再現精度が勝負です。見本サイトをご共有いただければ即日〜2日以内で納品できます。継続案件もぜひお任せください。まずはお気軽にご依頼ください。</p>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Kairos Web Production Team — Proposal for SEOPRO_2様</p>
+</footer>
+</body>
+</html>
